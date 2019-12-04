@@ -10,7 +10,8 @@ import UIKit
 import CoreData
 
 class TasksTableViewController: UITableViewController {
-
+    
+    // MARK: - Properties
     // This method is inefficient, bcause the fetch request will be executed every time we access tasks.
     // We will fix in a future class
     private var tasks: [Task] {
@@ -24,62 +25,48 @@ class TasksTableViewController: UITableViewController {
         }
     }
     
-
-    
+    // MARK: Views
     override func viewWillAppear(_ animated: Bool) {
         tableView.reloadData()
     }
     
-
-
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasks.count
     }
-
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
-
+        
         let task = tasks[indexPath.row]
         cell.textLabel?.text = task.name
         
         return cell
     }
-
-
-
-
-    /*
-    // Override to support editing the table view.
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            let task = tasks[indexPath.row]
+            let moc = CoreDataStack.shared.mainContext
+            moc.delete(task)
+            do {
+                try moc.save()
+                tableView.reloadData()
+            } catch {
+                moc.reset()
+                print("Error savingg managed object context /(error)")
+            }
+        }
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-   
-
-    /*
+    
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "taskDetailSegue" {
+            let detailVC = segue.destination as! TaskDetailViewController
+            if let indexPath = tableView.indexPathForSelectedRow {
+                detailVC.task = tasks[indexPath.row]
+            }
+        }
     }
-    */
-
 }
