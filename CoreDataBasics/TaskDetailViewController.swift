@@ -9,14 +9,53 @@
 import UIKit
 
 class TaskDetailViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var notesTextView: UITextView!
+    
+    var task: Task? {
+        didSet  {
+            updateViews()
+        }
     }
     
-
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        updateViews()
+      
+    }
+    
+    
+    
+    @IBAction func saveAction(_ sender: Any) {
+        guard let name = nameTextField.text, !name.isEmpty else { return }
+        
+        let notes = notesTextView.text
+        
+        // Editing an existing task
+        if let task = task {
+            task.name = name
+            task.notes = notes
+        } else {
+            // Creating a new task.
+        let _ = Task(name: name, notes: notes)
+        }
+        do {
+            let moc = CoreDataStack.shared.mainContext
+            try moc.save()
+        } catch {
+            print("Error saving managed object context: \(error)")
+        }
+        
+        navigationController?.popViewController(animated: true)
+        
+    }
+    
+    private func updateViews() {
+        guard isViewLoaded else { return }
+        title = task?.name ?? "Create Task"
+        nameTextField.text = task?.name
+        notesTextView.text = task?.notes
+    }
     /*
     // MARK: - Navigation
 

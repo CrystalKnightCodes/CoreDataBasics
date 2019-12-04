@@ -119,8 +119,16 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="luS-Lq-3nH">
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="zpS-ng-eFb"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="zpS-ng-eFb">
+                            <connections>
+                                <action selector="saveAction:" destination="BYZ-38-t0r" id="8Bv-A8-Hd5"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="nameTextField" destination="lon-Oj-odA" id="alF-7S-FS4"/>
+                        <outlet property="notesTextView" destination="Pkf-FS-8xr" id="euV-Ip-SPv"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

@@ -7,48 +7,49 @@
 //
 
 import UIKit
+import CoreData
 
 class TasksTableViewController: UITableViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    // This method is inefficient, bcause the fetch request will be executed every time we access tasks.
+    // We will fix in a future class
+    private var tasks: [Task] {
+        let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
+        let moc = CoreDataStack.shared.mainContext
+        do {
+            return try moc.fetch(fetchRequest)
+        } catch {
+            print("Error fetching tasks: \(error)")
+            return []
+        }
     }
+    
+
+    
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.reloadData()
+    }
+    
+
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return tasks.count
     }
 
-    /*
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
 
-        // Configure the cell...
-
+        let task = tasks[indexPath.row]
+        cell.textLabel?.text = task.name
+        
         return cell
     }
-    */
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
+
+
 
     /*
     // Override to support editing the table view.
@@ -69,13 +70,7 @@ class TasksTableViewController: UITableViewController {
     }
     */
 
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
+   
 
     /*
     // MARK: - Navigation
